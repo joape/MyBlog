@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, Comment
 
 # Register your models here.
 #admin.site.register(Post) 
@@ -13,4 +13,9 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = 'publish'
     ordering = ('status', 'publish')
     show_facets = admin.ShowFacets.ALWAYS #muestra los filtros en la barra lateral del panel de administración, incluso si no hay resultados para esos filtros. Esto puede ser útil para mantener la consistencia en la interfaz de administración y permitir a los administradores ver todas las opciones de filtrado disponibles, incluso si no hay datos que coincidan con esos filtros en ese momento.
-    
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'post', 'created', 'active')
+    list_filter = ('active', 'created', 'updated')
+    search_fields = ('name', 'email', 'body')

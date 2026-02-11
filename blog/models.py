@@ -10,7 +10,6 @@ class PublishedManager(models.Manager): #un administrador personalizado que se u
             super().get_queryset().filter(status=Post.Status.PUBLISHED)
         )
 
-
 class Post(models.Model):
     class Status(models.TextChoices):
         DRAFT = 'DF', 'Draft'
@@ -60,3 +59,23 @@ class FavouritePost(models.Model):
         on_delete=models.CASCADE
     )
     created = models.DateTimeField(auto_now_add=True) 
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    ) #un campo de clave foránea que se utiliza para establecer una relación entre el modelo Comment y el modelo Post. Esto permite asociar cada comentario con un post específico. El argumento on_delete=models.CASCADE indica que si un post es eliminado, todos los comentarios asociados a ese post también serán eliminados. El argumento related_name='comments' permite acceder a los comentarios de un post utilizando la sintaxis post.comments.
+    name = models.CharField(max_length=80) #un campo de texto que se utiliza para almacenar el nombre del autor del comentario.
+    email = models.EmailField() #un campo de correo electrónico que se utiliza para almacenar la dirección de correo electrónico del autor del comentario.
+    body = models.TextField() #un campo de texto que se utiliza para almacenar el contenido del comentario.
+    created = models.DateTimeField(auto_now_add=True) #un campo de fecha y hora que se utiliza para almacenar la fecha y hora de creación del comentario. El valor se establece automáticamente en la fecha y hora actual cuando se crea un nuevo comentario, gracias a auto_now_add=True.
+    updated = models.DateTimeField(auto_now=True) #un campo de fecha y hora que se utiliza para almacenar la fecha y hora de la última actualización del comentario. El valor se actualiza automáticamente cada vez que se guarda el comentario, gracias a auto_now=True.
+    active = models.BooleanField(default=True) #un campo booleano que se utiliza para indicar si el comentario está activo o no. El valor predeterminado es True, lo que significa que los comentarios estarán activos por defecto.
+
+    class Meta:
+        ordering = ('created',) #especifica el orden predeterminado de los objetos Comment cuando se consultan desde la base de datos. En este caso, se ordenarán por la fecha de creación en orden ascendente (de más antiguo a más reciente).
+
+    def __str__(self):
+        return f'Comment by {self.name} on {self.post}'
+        
